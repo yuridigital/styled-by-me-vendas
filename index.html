@@ -14,7 +14,7 @@
 <body>
 <div class="stage" id="stage">
   
-  <video class="media" id="v-f1-f" src="videos/look-f-1.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
+  <video class="media" id="v-f1-f" src="videos/look-f-1.mp4" poster="img/hero-poster.webp" muted playsinline preload="auto" aria-hidden="true"></video>
   <video class="media" id="v-f1-r" src="videos/look-f-1-reverse.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
   <video class="media" id="v-f2-f" src="videos/look-f-2.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
   <video class="media" id="v-f2-r" src="videos/look-f-2-reverse.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
@@ -806,15 +806,18 @@
  })();
  (function parkBase(){
  var base = vid('f1','forward');
- function show(){
- if (currentVideo) return;
- base.currentTime = 0;
- base.pause();
  base.classList.add('on');
  currentVideo = base;
+ function parar(){
+ base.pause();
+ try { base.currentTime = 0; } catch (e) {}
  }
- if (base.readyState >= 2){ show(); }
- else { base.addEventListener('loadeddata', show); }
+ function pintarPrimeiroQuadro(){
+ var p = base.play();
+ if (p && p.then){ p.then(parar, function(){}); } else { parar(); }
+ }
+ if (base.readyState >= 2){ pintarPrimeiroQuadro(); }
+ else { base.addEventListener('loadeddata', pintarPrimeiroQuadro, { once:true }); }
  })();
  var backBtn = controller.querySelector('button[data-kind="back"]');
  function restCell(){
