@@ -15,19 +15,19 @@
 <div class="stage" id="stage">
   
   <video class="media" id="v-f1-f" src="videos/look-f-1.mp4" poster="img/hero-poster.webp" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-f1-r" src="videos/look-f-1-reverse.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-f2-f" src="videos/look-f-2.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-f2-r" src="videos/look-f-2-reverse.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-f3-f" src="videos/look-f-3.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-f3-r" src="videos/look-f-3-reverse.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-m1-f" src="videos/look-m-1.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-m1-r" src="videos/look-m-1-reverse.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-m2-f" src="videos/look-m-2.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-m2-r" src="videos/look-m-2-reverse.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-m3-f" src="videos/look-m-3.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-m3-r" src="videos/look-m-3-reverse.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-troca-f" src="videos/troca.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-  <video class="media" id="v-troca-r" src="videos/troca-reverse.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
+  <video class="media" id="v-f1-r" src="videos/look-f-1-reverse.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-f2-f" src="videos/look-f-2.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-f2-r" src="videos/look-f-2-reverse.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-f3-f" src="videos/look-f-3.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-f3-r" src="videos/look-f-3-reverse.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-m1-f" src="videos/look-m-1.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-m1-r" src="videos/look-m-1-reverse.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-m2-f" src="videos/look-m-2.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-m2-r" src="videos/look-m-2-reverse.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-m3-f" src="videos/look-m-3.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-m3-r" src="videos/look-m-3-reverse.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-troca-f" src="videos/troca.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+  <video class="media" id="v-troca-r" src="videos/troca-reverse.mp4" muted playsinline preload="none" aria-hidden="true"></video>
   <div class="hero">
     <h1 id="title"><img class="hero-logo" src="img/logo-styledbyme.webp" width="672" height="160" alt="Styled By Me"></h1>
     <p>O <b>Styled by Me</b> decifra o seu código, lê as suas peças por foto e monta o look certo para cada compromisso.</p>
@@ -818,6 +818,35 @@
  }
  if (base.readyState >= 2){ pintarPrimeiroQuadro(); }
  else { base.addEventListener('loadeddata', pintarPrimeiroQuadro, { once:true }); }
+ })();
+ (function filaDeCarga(){
+ var ordem = ['v-troca-f','v-troca-r','v-f1-r','v-f2-f','v-f2-r','v-f3-f','v-f3-r',
+ 'v-m1-f','v-m1-r','v-m2-f','v-m2-r','v-m3-f','v-m3-r'];
+ var i = 0, emVoo = 0, LIMITE = 2;
+ function proximo(){
+ while (emVoo < LIMITE && i < ordem.length){
+ var el = document.getElementById(ordem[i++]);
+ if (!el) continue;
+ emVoo++;
+ var passou = false;
+ var seguir = function(){
+ if (passou) return;
+ passou = true; emVoo--;
+ proximo();
+ };
+ el.addEventListener('loadeddata', seguir, { once:true });
+ el.addEventListener('error', seguir, { once:true });
+ setTimeout(seguir, 12000); 
+ el.preload = 'auto';
+ try { el.load(); } catch (e) { seguir(); }
+ }
+ }
+ var base = document.getElementById('v-f1-f');
+ var comecou = false;
+ function comecar(){ if (comecou) return; comecou = true; proximo(); }
+ if (base && base.readyState >= 2){ comecar(); }
+ else if (base){ base.addEventListener('loadeddata', comecar, { once:true }); }
+ setTimeout(comecar, 6000); 
  })();
  var backBtn = controller.querySelector('button[data-kind="back"]');
  function restCell(){
